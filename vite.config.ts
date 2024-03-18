@@ -9,6 +9,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        background: resolve(__dirname, './public/service-worker.js'),
+        content: resolve(__dirname, './public/content.js'),
       },
     },
   },
