@@ -1,17 +1,40 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import pluginManifest from 'rollup-plugin-output-manifest';
 import { resolve } from 'path';
+import manifest from './src/manifest.json'
 
-// https://vitejs.dev/config/
+const { default: outputManifest } = pluginManifest
+
+const options = {
+  generate: () => (chunks) => {
+  
+    for (const chunk of chunks) {
+      if (chunk.name === 'serviceWorker') {
+        manifest.background.service_worker = chunk.fileName;
+      } else if (chunk.name === 'contentScript') {
+        manifest.content_scripts[0].js.push(chunk.fileName);
+      }
+    }
+
+    return {
+      ...manifest,
+    };
+  }
+};
+
 export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        background: resolve(__dirname, './public/service-worker.js'),
-        content: resolve(__dirname, './public/content.js'),
+        serviceWorker: resolve(__dirname, './src/serviceWorker.ts'),
+        contentScript: resolve(__dirname, './src/contentScript.ts'),
       },
+      plugins: [
+       outputManifest(options)
+      ]
     },
   },
 })

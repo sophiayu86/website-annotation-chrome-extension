@@ -2,7 +2,7 @@ console.log('Chrome extension go?');
 // chrome.runtime.onMessage.addListener(gotMessage);
 const handleSelectionChange = () => {
     let msg = {
-        txt: window.getSelection().toString(),
+        txt: window.getSelection()?.toString(),
       };
       console.log(msg.txt);
   };
